@@ -3,6 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const app = express();
 
 const productRoute = require("./routes/product.route");
 const brandRoute = require("./routes/brand.route");
@@ -12,16 +13,17 @@ const supplierRoute = require("./routes/supplier.route");
 const stockRoute = require("./routes/stock.route");
 const userRoute = require("./routes/user.route");
 
-// variables
-const app = express();
-const PORT = process.env.PORT || 8080;
-
 // middlewares
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
+// home route
 app.get("/", (req, res) => {
-    res.send(`Server is running`)
+    res.status(200).json({
+        succes: true,
+        data: "Server is running"
+    })
 })
 
 // routes
@@ -38,6 +40,6 @@ mongoose.connect(process.env.DATABASE)
     .then(() => { console.log(`Database connection is successful`) })
 
 // server
-app.listen(PORT, () => {
+app.listen(process.env.PORT || 8080, () => {
     console.log(`Server is running on port ${PORT}`)
 })
