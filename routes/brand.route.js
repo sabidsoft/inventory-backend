@@ -1,12 +1,13 @@
 const router = require("express").Router();
 const verifyToken = require("../middlewares/verifyToken");
+const authorization = require("../middlewares/authorization");
+
 const {
     createBrandController,
     getBrandsController,
     getBrandController,
     updateBrandController
 } = require("../controllers/brand.controller");
-const authorization = require("../middlewares/authorization");
 
 router.route("/")
     .get(getBrandsController)

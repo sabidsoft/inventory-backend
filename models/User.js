@@ -37,11 +37,6 @@ const userSchema = mongoose.Schema({
             message: "Password don't match!"
         }
     },
-    role: {
-        type: String,
-        default: "buyer",
-        enum: ["buyer", "admin", "stock-manager"]
-    },
     firstName: {
         type: String,
         trim: true,
@@ -66,6 +61,11 @@ const userSchema = mongoose.Schema({
     imageURL: {
         type: String,
         validate: [validator.isURL, "Please provide a valid url!"]
+    },
+    role: {
+        type: String,
+        default: "buyer",
+        enum: ["buyer", "admin", "stock-manager"]
     },
     status: {
         type: String,
