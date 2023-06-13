@@ -39,7 +39,9 @@ exports.getProductsController = async (req, res) => {
 
         const queries = {
             page: 1,
-            limit: 10
+            limit: 10,
+            sort: "",
+            field: ""
         };
 
         if (page) queries.page = parseInt(page);
