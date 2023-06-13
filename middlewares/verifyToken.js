@@ -53,7 +53,7 @@ module.exports = verifyToken;
 //     }
 // }
 
-module.exports = verifyToken;
+// module.exports = verifyToken;
 
 // // Another Way
 // // A way to send user's all data in request object
