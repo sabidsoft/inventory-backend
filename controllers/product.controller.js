@@ -27,34 +27,25 @@ exports.createProductController = async (req, res) => {
 
 exports.getProductsController = async (req, res) => {
     try {
+        const { page, limit, sort, field } = req.query;
+
         let filters = { ...req.query };
-        const excludesFields = ["sort", "page", "limit", "fields"];
-        excludesFields.forEach(excludesField => delete filters[excludesField]);
+        const fields = ["page", "limit", "sort", "field"];
+        fields.forEach(field => delete filters[field]);
 
         filters = JSON.stringify(filters);
         filters = filters.replace(/(gt|gte|lt|lte)/g, (value) => "$" + value);
         filters = JSON.parse(filters);
 
-        const queries = {};
+        const queries = {
+            page: 1,
+            limit: 10
+        };
 
-        if (req.query.sort) {
-            const sort = req.query.sort.split(',').join(' ');
-            queries.sorts = sort;
-        }
-
-        if (req.query.fields) {
-            const fields = req.query.fields.split(',').join(' ');
-            queries.fields = fields;
-        }
-
-        if (req.query.page) {
-            const page = parseInt(req.query.page) || 1;
-            const limit = parseInt(req.query.limit) || 10;
-
-            queries.page = page;
-            queries.skip = (page - 1) * limit;
-            queries.limit = limit;
-        }
+        if (page) queries.page = parseInt(page);
+        if (limit) queries.limit = parseInt(limit);
+        if (sort) queries.sort = sort.split(',').join(' ');
+        if (field) queries.field = field.split(',').join(' ');
 
         const result = await getProductsService(filters, queries);
 

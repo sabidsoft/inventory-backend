@@ -9,25 +9,26 @@ exports.createProductService = async (data) => {
 }
 
 exports.getProductsService = async (filters, queries) => {
-    const { page, skip, limit, sorts, fields } = queries;
+    const { page, limit, sort, field } = queries;
+    const skip = (page - 1) * limit;
 
     const products = await Product
         .find(filters)
         .skip(skip)
         .limit(limit)
-        .sort(sorts)
-        .select(fields)
+        .sort(sort)
+        .select(field)
 
     const totalDocuments = await Product.countDocuments(filters);
 
     const pagination = {
-        totalPages: Math.ceil(totalDocuments / limit),
+        totalPage: Math.ceil(totalDocuments / limit),
         currentPage: page,
         previousPage: page - 1 === 0 ? null : page - 1,
         nextPage: page + 1 <= Math.ceil(totalDocuments / limit) ? page + 1 : null
     }
 
-    if(pagination.currentPage > pagination.totalPages){
+    if (pagination.currentPage > pagination.totalPage) {
         pagination.currentPage = null;
         pagination.previousPage = null;
         pagination.nextPage = null;
