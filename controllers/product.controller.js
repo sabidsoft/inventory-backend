@@ -48,16 +48,20 @@ exports.getProductsController = async (req, res) => {
         }
 
         if (req.query.page) {
-            const { page = 1, limit = 10 } = req.query;
-            queries.skip = (parseInt(page) - 1) * parseInt(limit);
-            queries.limit = parseInt(limit);
+            const page = parseInt(req.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 10;
+
+            queries.page = page;
+            queries.skip = (page - 1) * limit;
+            queries.limit = limit;
         }
 
-        const products = await getProductsService(filters, queries);
+        const result = await getProductsService(filters, queries);
 
         res.status(200).json({
             success: true,
-            data: products
+            pagination: result.pagination,
+            data: result.products
         });
     }
 

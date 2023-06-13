@@ -3,23 +3,37 @@ const Brand = require("../models/Brand");
 
 exports.createProductService = async (data) => {
     const product = await Product.create(data);
-    await Brand.updateOne({ _id: product.brand.id }, {$push: { products: product._id }});
+    await Brand.updateOne({ _id: product.brand.id }, { $push: { products: product._id } });
 
     return product;
 }
 
 exports.getProductsService = async (filters, queries) => {
+    const { page, skip, limit, sorts, fields } = queries;
+
     const products = await Product
         .find(filters)
-        .skip(queries.skip)
-        .limit(queries.limit)
-        .sort(queries.sorts)
-        .select(queries.fields)
+        .skip(skip)
+        .limit(limit)
+        .sort(sorts)
+        .select(fields)
 
-    const total = await Product.countDocuments(filters);
-    const page = Math.ceil(total / queries.limit)
+    const totalDocuments = await Product.countDocuments(filters);
 
-    return { total, page, products };
+    const pagination = {
+        totalPages: Math.ceil(totalDocuments / limit),
+        currentPage: page,
+        previousPage: page - 1 === 0 ? null : page - 1,
+        nextPage: page + 1 <= Math.ceil(totalDocuments / limit) ? page + 1 : null
+    }
+
+    if(pagination.currentPage > pagination.totalPages){
+        pagination.currentPage = null;
+        pagination.previousPage = null;
+        pagination.nextPage = null;
+    }
+
+    return { pagination, products };
 }
 
 exports.updateProductService = async (id, data) => {
